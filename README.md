@@ -24,8 +24,8 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 |   └── dsresnet_cifar.py            #ds-resnet-18 for cifar
 ├── utils
 |   ├── defense_utils.py             #utils for different defenses
-|   ├── normalize_utils.py           #utlis for nomrlize images stored in numpy array (unused in the paper)
-|   ├── cutout.py                    #utlis for CUTOUT training (unused)
+|   ├── normalize_utils.py           #utils for nomrlize images stored in numpy array (unused in the paper)
+|   ├── cutout.py                    #utils for CUTOUT training (unused)
 |   └── progress_bar.py              #progress bar (used in train_cifar.py)
 | 
 ├── misc                             #useful scripts; move them to the main directory for execution
