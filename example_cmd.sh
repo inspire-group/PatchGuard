@@ -15,7 +15,7 @@ python mask_bn_imagenet.py --model bagnet17 --patch_size 31 --m #mask-bn with ba
 python patch_attack_imagenet.py --model bagnet17 --patch_size 31 #untargeted attack against bagnet17
 python patch_attack_imagenet.py --model bagnet17 --patch_size 31 --aggr cbn #untargeted attack against bagnet17 with cbn clipping
 #train model
-python train_imagenet.py --model_name bagnet17.pth  --epoch 20 #train model on imagenet(te)
+python train_imagenet.py --model_name bagnet17.pth  --epoch 20 #train model on imagenette
 
 #similar usage for cifar
 python test_acc_cifar.py --model resnet50_192
