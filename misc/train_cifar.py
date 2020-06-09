@@ -92,7 +92,7 @@ if device == 'cuda':
 if args.resume:
     # Load checkpoint.
     print('==> Resuming from checkpoint..')
-    assert os.path.isdir('checkpoint'), 'Error: no checkpoint directory found!'
+    assert os.path.isdir('./checkpoints'), 'Error: no checkpoint directory found!'
     checkpoint = torch.load(pth_path)
     net.load_state_dict(checkpoint['net'])
     best_acc = checkpoint['acc']
