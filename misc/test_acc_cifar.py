@@ -18,11 +18,10 @@ import numpy as np
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
-parser.add_argument('--data_dir', default='~/.torch_data', type=str,help="path to data")
+parser.add_argument('--data_dir', default='/data/cifar', type=str,help="path to data")
 parser.add_argument("--model",default='bagnet17',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='mean',type=str,help="aggregation methods. one of mean, median, cbn")
-parser.add_argument("--skip",default=1,type=int,help="number of example to skip")
 
 args = parser.parse_args()
 
@@ -74,8 +73,8 @@ for data,labels in tqdm(val_loader):
 	
 	data,labels=data.to(device),labels.to(device)
 	output_clean = model(data)
-	acc_clean=torch.sum(torch.argmax(output_clean, dim=1) == labels).cpu().detach().numpy()/ data.size(0)
+	acc_clean=torch.sum(torch.argmax(output_clean, dim=1) == labels).cpu().detach().numpy()
 	accuracy_list.append(acc_clean)
 	
-print("Test accuracy:",np.mean(accuracy_list))
+print("Test accuracy:",np.sum(accuracy_list)/len(testset))
 

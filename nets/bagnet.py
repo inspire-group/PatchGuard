@@ -6,10 +6,11 @@
 
 import torch.nn as nn
 import math
+import random
 import torch
 from collections import OrderedDict
 from torch.utils import model_zoo
-
+import numpy as np 
 import os 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -27,7 +28,7 @@ class Bottleneck(nn.Module):
 
     def __init__(self, inplanes, planes, stride=1, downsample=None, kernel_size=1):
         super(Bottleneck, self).__init__()
-        # print('Creating bottleneck with kernel size {} and stride {} with padding {}'.format(kernel_size, stride, (kernel_size - 1) // 2))
+        # #print('Creating bottleneck with kernel size {} and stride {} with padding {}'.format(kernel_size, stride, (kernel_size - 1) // 2))
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
         self.conv2 = nn.Conv2d(planes, planes, kernel_size=kernel_size, stride=stride,
@@ -119,7 +120,7 @@ class BagNet(nn.Module):
         
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def forward(self, x,y=None):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.bn1(x)
@@ -143,7 +144,6 @@ class BagNet(nn.Module):
 
         if self.clip_range is not None:
             x = torch.clamp(x,self.clip_range[0],self.clip_range[1]) 
-
         if self.aggregation == 'mean':
             x = torch.mean(x,dim=(1,2))
         elif self.aggregation == 'median':
@@ -155,6 +155,7 @@ class BagNet(nn.Module):
             x = torch.mean(x,dim=(1,2))
         elif self.aggregation == 'none':
             pass
+            
         return x
 
 def bagnet33(pretrained=False, strides=[2, 2, 2, 1], **kwargs):

@@ -17,11 +17,12 @@ import numpy as np
 from scipy.special import softmax
 from math import ceil
 
+
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
 parser.add_argument('--data_dir', default='/data/imagenette', type=str,help="path to data")
-#parser.add_argument('--data_dir', default='/data/imagenet_data/',type=str)
+#parser.add_argument('--data_dir', default='/data/imagenet',type=str)
 parser.add_argument("--model",default='bagnet17',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='none',type=str,help="aggregation methods. set to none for local feature")
@@ -49,7 +50,7 @@ val_dataset_ = datasets.ImageFolder(val_dir,val_transforms)
 class_names = val_dataset_.classes
 skips = list(range(0, len(val_dataset_), args.skip))
 val_dataset = torch.utils.data.Subset(val_dataset_, skips)
-val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=16,shuffle=False)
+val_loader = torch.utils.data.DataLoader(val_dataset, batch_size=8,shuffle=False)
 
 #build and initialize model
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -92,7 +93,6 @@ cudnn.benchmark = True
 accuracy_list=[]
 result_list=[]
 clean_corr=0
-clean_fp=0
 
 for data,labels in tqdm(val_loader):
 	
@@ -106,24 +106,25 @@ for data,labels in tqdm(val_loader):
 	#you can dump the local feature and do the provable analysis with another script so that GPU mempry is not always occupied	
 	for i in range(len(labels)):
 		if args.m:#robust masking
-			result = provable_masking(output_clean[i],labels[i],thres=args.thres,window_shape=[window_size,window_size])
+			local_feature = output_clean[i]
+			result = provable_masking(local_feature,labels[i],thres=args.thres,window_shape=[window_size,window_size])
 			result_list.append(result)
-			cnt,clean_pred = masking_defense(output_clean[i],thres=args.thres,window_shape=[window_size,window_size])
+			clean_pred = masking_defense(local_feature,thres=args.thres,window_shape=[window_size,window_size])
 			clean_corr += clean_pred == labels[i]
-			clean_fp+=cnt
+			
 		elif args.cbn:#cbn
 			result = provable_clipping(output_clean[i],labels[i],window_shape=[window_size,window_size])
 			result_list.append(result)
 			clean_pred = clipping_defense(output_clean[i])
 			clean_corr += clean_pred == labels[i]	
-	acc_clean = np.mean(np.argmax(np.mean(output_clean,axis=(1,2)),axis=1) == labels)
+	acc_clean = np.sum(np.argmax(np.mean(output_clean,axis=(1,2)),axis=1) == labels)
 	accuracy_list.append(acc_clean)
 
 
 cases,cnt=np.unique(result_list,return_counts=True)
+print("Provable robust accuracy:",cnt[-1]/len(result_list))
+print("Clean accuracy with defense:",clean_corr/len(result_list))
+print("Clean accuracy without defense:",np.sum(accuracy_list)/len(val_dataset))
+print("------------------------------")
 print("Provable analysis cases:",cases)
 print("Provable analysis breakdown",cnt/len(result_list))
-print("Clean accuracy with defense:",clean_corr/len(result_list))
-print("Clean accuracy without defense:",np.mean(accuracy_list))
-if args.m:
-	print("Detection FP:",clean_fp/len(result_list))

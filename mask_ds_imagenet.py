@@ -24,7 +24,9 @@ parser.add_argument('--model', default='resnet50', type=str, help='model')
 parser.add_argument('--checkpoint', default='imagenette.pth', type=str,help='checkpoint')
 parser.add_argument('--valpath', default='/data/imagenette/val', type=str, help='Path to validation set')
 #parser.add_argument('--checkpoint', default='imagenet.pth', type=str,help='checkpoint')
-#parser.add_argument('--valpath', default='/data/imagenet_data/val', type=str, help='Path to validation set')
+#parser.add_argument('--valpath', default='/data/imagenet/val', type=str, help='Path to validation set')
+
+
 parser.add_argument('--skip', default=1,type=int, help='Number of images to skip')
 parser.add_argument("--m",action='store_true',help="use robust masking")
 parser.add_argument("--ds",action='store_true',help="use derandomized smoothing")
@@ -45,7 +47,7 @@ valset = datasets.ImageFolder(valdir, transforms.Compose([
 skips = list(range(0, len(valset), args.skip))
 
 valset_1 = torch.utils.data.Subset(valset, skips)
-testloader = torch.utils.data.DataLoader(valset_1,batch_size=16)
+testloader = torch.utils.data.DataLoader(valset_1,batch_size=32)
 
 # Model
 print('==> Building model..')
@@ -102,21 +104,20 @@ if args.ds:#ds
 if args.m:#mask-ds
     result_list=[]
     clean_corr_list=[]
-    clean_fp_list=[]
     with torch.no_grad():
         for inputs, targets in tqdm(testloader):
             inputs = inputs.to(device)
             targets = targets.numpy()
-            result,clean_corr,clean_fp = masking_ds(inputs,targets,net,args.band_size, args.patch_size,thres=args.thres)
+            result,clean_corr = masking_ds(inputs,targets,net,args.band_size, args.patch_size,thres=args.thres)
             result_list+=result
             clean_corr_list+=clean_corr
-            clean_fp_list+=clean_fp
 
     cases,cnt=np.unique(result_list,return_counts=True)
     print('Results for Mask-DS')
+    print("Provable robust accuracy:",cnt[-1]/len(result_list))
+    print("Clean accuracy with defense:",np.mean(clean_corr_list))
+    print("------------------------------")
     print("Provable analysis cases:",cases)
-    print("Provable analysis breakdown",cnt/len(result_list))
-    print("Clean accuracy with defense:",np.mean(clean_corr_list))    
-    print("Detection FP:",np.mean(clean_fp_list))
+    print("Provable analysis breakdown:",cnt/len(result_list))
 
 

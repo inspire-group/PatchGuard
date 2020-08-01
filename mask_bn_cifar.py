@@ -21,7 +21,7 @@ import PIL
 parser = argparse.ArgumentParser()
 
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
-parser.add_argument('--data_dir', default='~/.torch_data', type=str,help="path to data")
+parser.add_argument('--data_dir', default='/data/cifar', type=str,help="path to data")
 parser.add_argument("--model",default='bagnet17_192',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='none',type=str,help="aggregation methods. set to none for local feature")
@@ -47,7 +47,7 @@ transform_test = transforms.Compose([
 ])
 testset = datasets.CIFAR10(root=DATA_DIR, train=False, download=True, transform=transform_test)
 
-val_loader = torch.utils.data.DataLoader(testset, batch_size=8, shuffle=False, num_workers=2)
+val_loader = torch.utils.data.DataLoader(testset, batch_size=8, shuffle=False)
 
 #build and initialize model
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -87,7 +87,6 @@ cudnn.benchmark = True
 accuracy_list=[]
 result_list=[]
 clean_corr=0
-clean_fp=0
 
 for data,labels in tqdm(val_loader):
 	
@@ -103,9 +102,8 @@ for data,labels in tqdm(val_loader):
 		if args.m:#robust masking
 			result = provable_masking(output_clean[i],labels[i],thres=args.thres,window_shape=[window_size,window_size])
 			result_list.append(result)
-			cnt,clean_pred = masking_defense(output_clean[i],thres=args.thres,window_shape=[window_size,window_size])
+			clean_pred = masking_defense(output_clean[i],thres=args.thres,window_shape=[window_size,window_size])
 			clean_corr += clean_pred == labels[i]
-			clean_fp+=cnt
 		elif args.cbn:#cbn
 			result = provable_clipping(output_clean[i],labels[i],window_shape=[window_size,window_size])
 			result_list.append(result)
@@ -116,9 +114,10 @@ for data,labels in tqdm(val_loader):
 
 
 cases,cnt=np.unique(result_list,return_counts=True)
-print("Provable analysis cases:",cases)
-print("Provable analysis breakdown",cnt/len(result_list))
+
+print("Provable robust accuracy:",cnt[-1]/len(result_list))
 print("Clean accuracy with defense:",clean_corr/len(result_list))
 print("Clean accuracy without defense:",np.mean(accuracy_list))
-if args.m:
-	print("Detection FP:",clean_fp/len(result_list))
+print("------------------------------")
+print("Provable analysis cases:",cases)
+print("Provable analysis breakdown",cnt/len(result_list))

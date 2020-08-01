@@ -25,7 +25,7 @@ parser.add_argument('--patch_size', default=5, type=int, help='patch_size')
 parser.add_argument('--checkpoint', default='cifar.pth',type=str,help='checkpoint')
 parser.add_argument('--thres', default=0.0, type=float, help='detection threshold for robus masking')
 parser.add_argument('--model', default='resnet18', type=str, help='model')
-parser.add_argument('--datapath', default='~/.torch_data', type=str, help='Path to data file')
+parser.add_argument('--datapath', default='/data/cifar', type=str, help='Path to data file')
 parser.add_argument("--m",action='store_true',help="use robust masking")
 parser.add_argument("--ds",action='store_true',help="use derandomized smoothing")
 
@@ -76,7 +76,7 @@ if args.ds:#ds
         for inputs, targets in tqdm(testloader):
             inputs, targets = inputs.to(device), targets.to(device)
             total += targets.size(0)
-            predictions,  certyn = ds(inputs, net,args.band_size, args.patch_size, num_cls,threshold = 0.2)
+            predictions,  certyn = ds(inputs, net,args.band_size, args.patch_size, num_cls,threshold = 0.2) # 0.2 is the parameters used in ds paper
             correct += (predictions.eq(targets)).sum().item()
             cert_correct += (predictions.eq(targets) & certyn).sum().item()
             cert_incorrect += (~predictions.eq(targets) & certyn).sum().item()
@@ -91,21 +91,21 @@ if args.ds:#ds
 if args.m:#mask-ds
     result_list=[]
     clean_corr_list=[]
-    clean_fp_list=[]
     with torch.no_grad():
         for inputs, targets in tqdm(testloader):
             inputs = inputs.to(device)
             targets = targets.numpy()
-            result,clean_corr,clean_fp = masking_ds(inputs,targets,net,args.band_size, args.patch_size,thres=args.thres)
+            result,clean_corr = masking_ds(inputs,targets,net,args.band_size, args.patch_size,thres=args.thres)
             result_list+=result
             clean_corr_list+=clean_corr
-            clean_fp_list+=clean_fp
-
     cases,cnt=np.unique(result_list,return_counts=True)
+    
     print('Results for Mask-DS')
+    print("Provable robust accuracy:",cnt[-1]/len(result_list))
+    print("Clean accuracy with defense:",np.mean(clean_corr_list))
+    print("------------------------------")
     print("Provable analysis cases:",cases)
-    print("Provable analysis breakdown",cnt/len(result_list))
-    print("Clean accuracy with defense:",np.mean(clean_corr_list))    
-    print("Detection FP:",np.mean(clean_fp_list))
+    print("Provable analysis breakdown:",cnt/len(result_list))
+
 
 
