@@ -59,6 +59,9 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
+## Notes
+- There was a major change of the provable analysis in `defense_utils.py` on 08/01/2020. 
+
 ## Related Repositories
 - [certifiedpatchdefense](https://github.com/Ping-C/certifiedpatchdefense)
 - [patchSmoothing](https://github.com/alevine0/patchSmoothing)
