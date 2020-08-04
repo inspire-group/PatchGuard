@@ -60,7 +60,7 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Notes
-- There was a major change of the provable analysis in `defense_utils.py` on 08/01/2020. 
+- There was a major change update to `defense_utils.py` on 08/01/2020. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
 
 ## Related Repositories
 - [certifiedpatchdefense](https://github.com/Ping-C/certifiedpatchdefense)
