@@ -295,8 +295,8 @@ def provable_masking_large_mask(local_feature,label,clipping=-1,thres=0.,window_
 			max_mask_sum_pred = np.max(in_mask_sum_pred_masked)
 
 			global_feature_patched[global_pred]= global_feature[global_pred] - in_patch_sum_tensor[x,y,global_pred]
-			if max_window_sum_pred / local_feature_pred_masked.sum() > thres: 
-				global_feature_masked[global_pred]-=max_window_sum_pred
+			if max_mask_sum_pred / local_feature_pred_masked.sum() > thres: 
+				global_feature_patched[global_pred]-=max_mask_sum_pred
 			
 			# determine if an attack is possible
 			if np.argsort(global_feature_patched,kind='stable')[-1]!=label:

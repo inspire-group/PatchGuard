@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
 parser.add_argument('--data_dir', default='/data/imagenette', type=str,help="path to data")
 #parser.add_argument('--data_dir', default='/data/imagenet',type=str)
-parser.add_argument("--model",default='bagnet17',type=str,help="model name")
+parser.add_argument("--model",default='bagnet17_nette',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='none',type=str,help="aggregation methods. set to none for local feature")
 parser.add_argument("--skip",default=1,type=int,help="number of example to skip")
@@ -77,15 +77,18 @@ model = model.to(device)
 if 'imagenette' in args.data_dir:
 	num_ftrs = model.fc.in_features
 	model.fc = nn.Linear(num_ftrs, len(class_names))
-	model = torch.nn.DataParallel(model)
+model = torch.nn.DataParallel(model)
+
+# a little bit tedious here, will clean later
+if 'nette' in args.model: 
 	print('restoring model from checkpoint...')
 	checkpoint = torch.load(os.path.join(MODEL_DIR,args.model+'.pth'))
 	model.load_state_dict(checkpoint['model_state_dict'])
-	num_cls=10
-else:
-	model = torch.nn.DataParallel(model)
-	num_cls=1000
-
+elif 'net' in args.model:
+	print('restoring model from checkpoint...')
+	checkpoint = torch.load(os.path.join(MODEL_DIR,args.model+'.pth'))
+	model.load_state_dict(checkpoint['state_dict'])
+	
 model = model.to(device)
 model.eval()
 cudnn.benchmark = True
@@ -126,5 +129,5 @@ print("Provable robust accuracy:",cnt[-1]/len(result_list))
 print("Clean accuracy with defense:",clean_corr/len(result_list))
 print("Clean accuracy without defense:",np.sum(accuracy_list)/len(val_dataset))
 print("------------------------------")
-print("Provable analysis cases:",cases)
+print("Provable analysis cases (0: incorrect prediction; 1: vulnerable; 2: provably robust):",cases)
 print("Provable analysis breakdown",cnt/len(result_list))

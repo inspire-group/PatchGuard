@@ -21,7 +21,7 @@ parser.add_argument('--band_size', default=25, type=int, help='size of each smoo
 parser.add_argument('--patch_size', default=42, type=int, help='patch_size')
 parser.add_argument('--thres', default=0.0, type=float, help='detection threshold for robus masking')
 parser.add_argument('--model', default='resnet50', type=str, help='model')
-parser.add_argument('--checkpoint', default='imagenette.pth', type=str,help='checkpoint')
+parser.add_argument('--checkpoint', default='ds_nette.pth', type=str,help='checkpoint')
 parser.add_argument('--valpath', default='/data/imagenette/val', type=str, help='Path to validation set')
 #parser.add_argument('--checkpoint', default='imagenet.pth', type=str,help='checkpoint')
 #parser.add_argument('--valpath', default='/data/imagenet/val', type=str, help='Path to validation set')
@@ -117,7 +117,7 @@ if args.m:#mask-ds
     print("Provable robust accuracy:",cnt[-1]/len(result_list))
     print("Clean accuracy with defense:",np.mean(clean_corr_list))
     print("------------------------------")
-    print("Provable analysis cases:",cases)
+    print("Provable analysis cases (0: incorrect prediction; 1: vulnerable; 2: provably robust):",cases)
     print("Provable analysis breakdown:",cnt/len(result_list))
 
 

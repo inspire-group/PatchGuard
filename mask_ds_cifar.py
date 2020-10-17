@@ -22,7 +22,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--band_size', default=4, type=int, help='size of each smoothing band')
 parser.add_argument('--patch_size', default=5, type=int, help='patch_size')
-parser.add_argument('--checkpoint', default='cifar.pth',type=str,help='checkpoint')
+parser.add_argument('--checkpoint', default='ds_cifar.pth',type=str,help='checkpoint')
 parser.add_argument('--thres', default=0.0, type=float, help='detection threshold for robus masking')
 parser.add_argument('--model', default='resnet18', type=str, help='model')
 parser.add_argument('--datapath', default='/data/cifar', type=str, help='Path to data file')
@@ -104,7 +104,7 @@ if args.m:#mask-ds
     print("Provable robust accuracy:",cnt[-1]/len(result_list))
     print("Clean accuracy with defense:",np.mean(clean_corr_list))
     print("------------------------------")
-    print("Provable analysis cases:",cases)
+    print("Provable analysis cases (0: incorrect prediction; 1: vulnerable; 2: provably robust):",cases)
     print("Provable analysis breakdown:",cnt/len(result_list))
 
 

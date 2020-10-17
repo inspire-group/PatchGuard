@@ -133,15 +133,6 @@ class BagNet(nn.Module):
         x = x.permute(0,2,3,1)
 
         x = self.fc(x)
-        #training with masks in the feature space. might be useful for some datasets
-
-        #feature_size = x.size()[1]
-        #mask_size=10
-        #mask_loc = torch.randint(0, feature_size - mask_size, [2])
-        #mask = torch.ones([x.size()[0], x.size()[1] ,x.size()[2],1],dtype=torch.bool).cuda()
-        #mask[:,mask_loc[0]:mask_loc[0]+mask_size,mask_loc[1]:mask_loc[1]+mask_size,:]=False
-        #x=torch.where(mask.cuda(),x,torch.tensor(0.).cuda())
-
         if self.clip_range is not None:
             x = torch.clamp(x,self.clip_range[0],self.clip_range[1]) 
         if self.aggregation == 'mean':
@@ -153,6 +144,18 @@ class BagNet(nn.Module):
         elif self.aggregation =='cbn':#clipped BagNet
             x = torch.tanh(x*0.05-1)
             x = torch.mean(x,dim=(1,2))
+        elif self.aggregation == 'adv':# provable adversarial training
+            window_size = 6   # the size of window to be masked during the training 
+            B,W,H,C = x.size()
+            x = torch.clamp(x,0,torch.tensor(float('inf'))) #clip
+            tmp = x[torch.arange(B),:,:,y] #the feature map for the true class
+            tmp = tmp.unfold(1,window_size,1).unfold(2,window_size,1) #unfold
+            tmp = tmp.reshape([B,-1,window_size,window_size]) # [B,num_window,window_size,window_size]
+            tmp = torch.sum(tmp,axis=(-2,-1))   # [B,num_window] true class evidence in every window
+            tmp = torch.max(tmp,axis=-1).values # [B] max window class evidence
+            x = torch.sum(x,dim=(1,2)) # 
+            x[torch.arange(B),y]-=tmp  # substract the max true window class evidence
+            x/=(W*H)
         elif self.aggregation == 'none':
             pass
             
@@ -190,43 +193,4 @@ def bagnet9(pretrained=False, strides=[2, 2, 2, 1], **kwargs):
     #model = BagNet(Bottleneck, [2,2,2,2], strides=strides, kernel3=[1,1,0,0], **kwargs)
     if pretrained:
         model.load_state_dict(model_zoo.load_url(model_urls['bagnet9']))
-    return model
-
-def bagnet9_s(pretrained=False, strides=[2, 2, 2, 1], **kwargs):
-    """Constructs a Bagnet-9 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    #model = BagNet(Bottleneck, [3, 4, 6, 3], strides=strides, kernel3=[1,1,0,0], **kwargs)
-    model = BagNet(Bottleneck, [2,2,2,2], strides=strides, kernel3=[1,1,0,0], **kwargs)
-    if pretrained:
-        model.load_state_dict(model_zoo.load_url(model_urls['bagnet9']))
-    return model
-
-def bagnet5(pretrained=False, strides=[2, 2, 2, 1], **kwargs):
-    """Constructs a Bagnet-9 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = BagNet(Bottleneck, [3, 4, 6, 3], strides=strides, kernel3=[1,0,0,0], **kwargs)
-    return model
-
-def bagnet5_s(pretrained=False, strides=[2, 2, 2, 1], **kwargs):
-    """Constructs a Bagnet-9 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = BagNet(Bottleneck, [2,2,2,2], strides=strides, kernel3=[1,0,0,0], **kwargs)
-    return model
-
-def bagnet3(pretrained=False, strides=[2, 2, 2, 1], **kwargs):
-    """Constructs a Bagnet-9 model.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-    """
-    model = BagNet(Bottleneck, [3, 4, 6, 3], strides=strides, kernel3=[0,0,0,0], **kwargs)
     return model

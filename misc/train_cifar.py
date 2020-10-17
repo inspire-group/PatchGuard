@@ -72,9 +72,9 @@ else:
 # Model
 print('==> Building model..')
 
-pth_path = './checkpoints/bagnet17_192.pth'
+pth_path = './checkpoints/bagnet17_192_cifar.pth'
 
-net = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation='mean')
+net = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation='mean') #aggregation = 'adv' for provable adversarial training
 #net = nets.resnet.resnet50(pretrained=True)
 
 #for param in net.parameters():

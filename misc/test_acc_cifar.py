@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
 parser.add_argument('--data_dir', default='/data/cifar', type=str,help="path to data")
-parser.add_argument("--model",default='bagnet17',type=str,help="model name")
+parser.add_argument("--model",default='bagnet17_cifar',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='mean',type=str,help="aggregation methods. one of mean, median, cbn")
 

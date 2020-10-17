@@ -31,13 +31,12 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 ├── misc                             #useful scripts; move them to the main directory for execution
 |   ├── test_acc_imagenet.py         #test clean accuracy of resnet/bagnet on imagenet(te); support clipping, median operations
 |   ├── test_acc_cifar.py            #test clean accuracy of resnet/bagnet on cifar; support clipping, median operations
-|   ├── train_imagenet.py            #train resnet/bagnet for imagenet(te)
+|   ├── train_imagenet.py            #train resnet/bagnet for imagenet
+|   ├── train_imagenette.py          #train resnet/bagnet for imagenette
 |   ├── train_cifar.py               #train resnet/bagnet for cifar
 |   ├── patch_attack_imagenet.py     #empirically attack resnet/bagnet trained on imagenet(te)
 |   ├── patch_attack_cifar.py        #empirically attack resnet/bagnet trained on cifar
 |   ├── PatchAttacker.py             #untargeted adversarial patch attack 
-|   ├── ds_imagenet.py               #ds for imagenet(te)
-|   └── ds_cifar.py                  #ds for imagenet(te)
 |
 └── checkpoints                      #directory for checkpoints
     ├── README.md                    #details of each checkpoint
@@ -60,7 +59,8 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Notes
-- There was a major change update to `defense_utils.py` on 08/01/2020. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
+- 10/17/2020 - Updated old checkpoints. Please download the new checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) for better model performance. Note that checkpoints for 1000-class ImageNet are also available now. Also a few minor updates to the source code. 
+- 08/01/2020 - A major update to `defense_utils.py`. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
 
 ## Related Repositories
 - [certifiedpatchdefense](https://github.com/Ping-C/certifiedpatchdefense)
