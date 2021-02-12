@@ -60,7 +60,6 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Notes
-- 02/15/2020 - Paper is accepted to USENIX Security Symposium 2021. There should be no major update in the future. The final paper will be available on USENIX Security Symposium 2021 webpage, and we will keep our latest technical report on [arXiv](https://arxiv.org/abs/2005.10884).
 - 02/11/2020 - Merged a few scripts; fixed a few minor bugs
 - 10/17/2020 - Updated old checkpoints. Please download the new checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) for better model performance. Note that checkpoints for 1000-class ImageNet are also available now. Also a few minor updates to the source code. 
 - 08/01/2020 - A major update to `defense_utils.py`. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
