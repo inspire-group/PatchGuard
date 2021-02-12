@@ -54,11 +54,11 @@ transform_test = transforms.Compose([
 ])
 
 
-trainset = torchvision.datasets.CIFAR10(root='/data/cifar', train=True, download=True, transform=transform_train)
+trainset = torchvision.datasets.CIFAR10(root='data/cifar', train=True, download=True, transform=transform_train)
 
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2)
 
-testset = torchvision.datasets.CIFAR10(root='/data/cifar', train=False, download=True, transform=transform_test)
+testset = torchvision.datasets.CIFAR10(root='data/cifar', train=False, download=True, transform=transform_test)
 
 testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)
 
@@ -74,7 +74,7 @@ print('==> Building model..')
 
 pth_path = './checkpoints/bagnet17_192_cifar.pth'
 
-net = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation='mean') #aggregation = 'adv' for provable adversarial training
+net = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation='adv') #aggregation = 'mean' for vanilla training
 #net = nets.resnet.resnet50(pretrained=True)
 
 #for param in net.parameters():

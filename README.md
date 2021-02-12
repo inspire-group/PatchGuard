@@ -1,25 +1,23 @@
-# PatchGuard: Provable Defense against Adversarial Patches Using Masks on Small Receptive Fields
-By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://scholar.princeton.edu/vvikash/home), [Prattek Mittal](https://www.princeton.edu/~pmittal/)
+# PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking
+By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://vsehwag.github.io/), [Prattek Mittal](https://www.princeton.edu/~pmittal/)
 
-Code for paper "PatchGuard: Provable Defense against Adversarial Patches Using Masks on Small Receptive Fields" [arXiv](https://arxiv.org/abs/2005.10884)
+Code for paper "PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking" [arXiv](https://arxiv.org/abs/2005.10884)
 
 <img src="./doc/overview.png" width="100%" alt="defense overview pipeline" align=center>
 
 ## Requirements
-The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of required packages are available in `requirement.txt`, and can be installed with `pip install -r requirement.txt`. The code should be compatible with other versions of packages.
+The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of required packages are available in `requirement.txt`, and can be installed with `pip install -r requirement.txt`. The code should be compatible with other versions of packages.
 
 ## Files
 ```shell
 ├── README.md                        #this file 
 ├── requirement.txt                  #required package
 ├── example_cmd.sh                   #example command to run the code
-├── mask_bn_imagenet.py              #mask-bn for imagenet(te)
-├── mask_bn_cifar.py                 #mask-bn for cifar
-├── mask_ds_imagenet.py              #mask-ds for imagenet(te)
-├── mask_ds_cifar.py                 #mask-ds for cifar
+├── mask_bn.py             	 		 #mask-bn for imagenet/imagenet/cifar
+├── mask_ds.py              		 #mask-ds/ds for imagenet/imagenet/cifar
 ├── nets
 |   ├── bagnet.py                    #modified bagnet model for mask-bn
-|   ├── resnet.py                    #modified resnet model for mask-bn
+|   ├── resnet.py                    #modified resnet model 
 |   ├── dsresnet_imgnt.py            #ds-resnet-50 for imagenet(te)
 |   └── dsresnet_cifar.py            #ds-resnet-18 for cifar
 ├── utils
@@ -29,14 +27,17 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 |   └── progress_bar.py              #progress bar (used in train_cifar.py)
 | 
 ├── misc                             #useful scripts; move them to the main directory for execution
-|   ├── test_acc_imagenet.py         #test clean accuracy of resnet/bagnet on imagenet(te); support clipping, median operations
-|   ├── test_acc_cifar.py            #test clean accuracy of resnet/bagnet on cifar; support clipping, median operations
+|   ├── test_acc.py         		 #test clean accuracy of resnet/bagnet on imagenet/imagenette/cifar; support clipping, median operations
 |   ├── train_imagenet.py            #train resnet/bagnet for imagenet
 |   ├── train_imagenette.py          #train resnet/bagnet for imagenette
 |   ├── train_cifar.py               #train resnet/bagnet for cifar
-|   ├── patch_attack_imagenet.py     #empirically attack resnet/bagnet trained on imagenet(te)
-|   ├── patch_attack_cifar.py        #empirically attack resnet/bagnet trained on cifar
+|   ├── patch_attack_bagnet.py       #empirically (untargeted) attack resnet/bagnet trained on imagenet/imagenette/cifar
 |   ├── PatchAttacker.py             #untargeted adversarial patch attack 
+|
+├── data   
+|   ├── imagenet             		 #data directory for imagenet
+|   ├── imagenette           		 #data directory for imagenette
+|   └── cifar						 #data directory for cifar
 |
 └── checkpoints                      #directory for checkpoints
     ├── README.md                    #details of each checkpoint
@@ -50,7 +51,7 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 ## Usage
 - See **Files** for details of each file. 
 
-- Download data in **Datasets** and specify the data directory to the code.
+- Download data in **Datasets** to `data/`.
 
 - (optional) Download checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) and move them to `checkpoints`.
 
@@ -59,6 +60,8 @@ The code is tested with Python 3.6 and PyTorch 1.3.0. The complete list of requi
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Notes
+- 02/15/2020 - Paper is accepted to USENIX Security Symposium 2021. There should be no major update in the future. The final paper will be available on USENIX Security Symposium 2021 webpage, and we will keep our latest technical report on [arXiv](https://arxiv.org/abs/2005.10884).
+- 02/11/2020 - Merged a few scripts; fixed a few minor bugs
 - 10/17/2020 - Updated old checkpoints. Please download the new checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) for better model performance. Note that checkpoints for 1000-class ImageNet are also available now. Also a few minor updates to the source code. 
 - 08/01/2020 - A major update to `defense_utils.py`. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
 

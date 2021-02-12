@@ -3,20 +3,21 @@ import torch
 from scipy.special import softmax
 
 # robust masking defense (Algorithm 1 in the paper)
-def masking_defense(local_feature,clipping=-1,thres=0.,window_shape=[6,6]):
+def masking_defense(local_feature,clipping=-1,thres=0.,window_shape=[6,6],ds=False):
 	'''
 	local_feature	numpy.ndarray, feature tensor in the shape of [feature_size_x,feature_size_y,num_cls]
 	clipping 		int/float, the positive clipping value ($c_h$ in the paper). If clipping < 0, treat clipping as np.inf
 	thres 			float in [0,1], detection threshold. ($T$ in the paper)
 	window_shape	list [int,int], the shape of sliding window
+	ds 				boolean, whether is for mask-ds
 
 	Return 			int, robust prediction
 	'''
 
 	feature_size_x,feature_size_y,num_cls = local_feature.shape
 	window_size_x,window_size_y = window_shape
-	num_window_x = feature_size_x - window_size_x + 1
-	num_window_y = feature_size_y - window_size_y + 1
+	num_window_x = feature_size_x - window_size_x + 1 if not ds else feature_size_x
+	num_window_y = feature_size_y - window_size_y + 1 if not ds else feature_size_y
 
 	# clipping
 	if clipping >0:
@@ -31,7 +32,11 @@ def masking_defense(local_feature,clipping=-1,thres=0.,window_shape=[6,6]):
 	in_window_sum_tensor=np.zeros([num_window_x,num_window_y,num_cls])
 	for x in range(0,num_window_x):
 		for y in range(0,num_window_y):
-			in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+			if ds and x + window_size_x > feature_size_x: #only happens when ds is True
+				in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:,y:y+window_size_y,:],axis=(0,1)) + np.sum(local_feature[:x+window_size_x-feature_size_x,y:y+window_size_y,:],axis=(0,1))
+			else: # normal case
+				in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+
 
 	# calculate clipped and masked class evidence for each class
 	for c in range(num_cls):
@@ -44,21 +49,22 @@ def masking_defense(local_feature,clipping=-1,thres=0.,window_shape=[6,6]):
 
 
 # provable analysis of robust masking defense (Algorithm 2 in the paper)
-def provable_masking(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6]):
+def provable_masking(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6],ds=False):
 	'''
 	local_feature	numpy.ndarray, feature tensor in the shape of [feature_size_x,feature_size_y,num_cls]
 	label 			int, true label
 	clipping 		int/float, the positive clipping value ($c_h$ in the paper). If clipping < 0, treat clipping as np.inf
 	thres 			float in [0,1], detection threshold. ($T$ in the paper)
 	window_shape	list [int,int], the shape of sliding window
+	ds 				boolean, whether is for mask-ds
 
 	Return 		int, provable analysis results (0: incorrect clean prediction; 1: possible attack found; 2: certified robustness )
 	'''
 
 	feature_size_x,feature_size_y,num_cls = local_feature.shape
 	window_size_x,window_size_y = window_shape
-	num_window_x = feature_size_x - window_size_x + 1
-	num_window_y = feature_size_y - window_size_y + 1
+	num_window_x = feature_size_x - window_size_x + 1 if not ds else feature_size_x
+	num_window_y = feature_size_y - window_size_y + 1 if not ds else feature_size_y
 
 	if clipping > 0:
 		local_feature = np.clip(local_feature,0,clipping)
@@ -80,7 +86,10 @@ def provable_masking(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6]
 
 	for x in range(0,num_window_x):
 		for y in range(0,num_window_y):
-			in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+			if ds and x+window_size_x>feature_size_x:  #only happens when ds is True
+				in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:,y:y+window_size_y,:],axis=(0,1)) + np.sum(local_feature[:x+window_size_x-feature_size_x,y:y+window_size_y,:],axis=(0,1))
+			else:
+				in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
 
 
 	idx = np.ones([num_cls],dtype=bool)
@@ -94,13 +103,21 @@ def provable_masking(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6]
 
 			# determine the lower bound of true class evidence
 			local_feature_pred_masked = local_feature_pred.copy()
-			local_feature_pred_masked[x:x+window_size_x,y:y+window_size_y]=0 # operation $u\odot(1-w)$
+			if ds and x+window_size_x>feature_size_x:
+				local_feature_pred_masked[x:,y:y+window_size_y]=0 
+				local_feature_pred_masked[:x+window_size_x-feature_size_x,y:y+window_size_y]=0 
+			else:
+				local_feature_pred_masked[x:x+window_size_x,y:y+window_size_y]=0 # operation $u\odot(1-w)$
+
 			in_window_sum_pred_masked = in_window_sum_tensor[:,:,global_pred].copy()
 			# only need to recalculate the windows the are partially masked
 			for xx in range(max(0,x - window_size_x + 1),min(x + window_size_x,num_window_x)):
 				for yy in range(max(0,y - window_size_y + 1),min(y + window_size_y,num_window_y)):
-					in_window_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:xx+window_size_x,yy:yy+window_size_y].sum()
-
+					if ds and xx+window_size_x>feature_size_x:
+						in_window_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:,yy:yy+window_size_y].sum()+local_feature_pred_masked[:xx+window_size_x-feature_size_x,yy:yy+window_size_y].sum()
+					else:
+						in_window_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:xx+window_size_x,yy:yy+window_size_y].sum()
+					
 			max_window_sum_pred = np.max(in_window_sum_pred_masked) # find the window with the largest sum
 			if max_window_sum_pred / local_feature_pred_masked.sum() > thres: 
 				global_feature_masked[global_pred]-=max_window_sum_pred
@@ -201,8 +218,8 @@ def masking_ds(inpt,labels,net,block_size,size_to_certify,thres=0.0):
 		pred_list.append(pred_tmp)
 
 	#output_list = np.stack(logits_list,axis=1)
-	output_list = np.stack(cnf_list,axis=1)
-	#output_list = np.stack(pred_list,axis=1)
+	#output_list = np.stack(cnf_list,axis=1)
+	output_list = np.stack(pred_list,axis=1)
 
 	B,W,C=output_list.shape
 	result_list=[]
@@ -211,14 +228,14 @@ def masking_ds(inpt,labels,net,block_size,size_to_certify,thres=0.0):
 
 	for i in range(len(labels)):
 		local_feature = output_list[i].reshape([W,1,C])
-		result=provable_masking(local_feature,labels[i],window_shape=[window_size,1],thres=thres)
-		clean_pred=masking_defense(local_feature,window_shape=[window_size,1],thres=thres)
+		result=provable_masking(local_feature,labels[i],window_shape=[window_size,1],thres=thres,ds=True)
+		clean_pred=masking_defense(local_feature,window_shape=[window_size,1],thres=thres,ds=True)
 		result_list.append(result)
 		clean_corr_list.append(clean_pred == labels[i])
 
 	return result_list,clean_corr_list
 
-
+##################################################################################################################################
 
 # a extended version of provable_masking()
 def provable_masking_large_mask(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6],mask_shape=None):
