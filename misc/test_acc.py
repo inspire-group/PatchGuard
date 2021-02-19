@@ -64,14 +64,12 @@ else:
 
 if 'bagnet17' in args.model:
     model = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=17
 elif 'bagnet33' in args.model:
     model = nets.bagnet.bagnet33(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=33
 elif 'bagnet9' in args.model:
     model = nets.bagnet.bagnet9(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=9
-
+elif 'resnet50' in args.model:
+    model = nets.resnet.resnet50(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
 
 if DATASET == 'imagenette':
     num_ftrs = model.fc.in_features

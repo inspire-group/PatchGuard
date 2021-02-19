@@ -26,8 +26,8 @@ python test_acc.py --model bagnet17 --dataset imagenette --clip 15 #test accurac
 python test_acc.py --model bagnet17 --dataset imagenette --aggr median #test accuracy of bagnet17 with median aggregation on imagenette (similar for imagenet,cifar)
 python test_acc.py --model bagnet17 --dataset imagenette --aggr cbn #test accuracy of bagnet17 with cbn clipping on imagenette (similar for imagenet,cifar)
 #empirical untargeted attack
-python patch_attack_bagnet.py --model bagnet17 --datset imagenette --patch_size 31 #untargeted attack against bagnet17
-python patch_attack_bagnet.py --model bagnet17 --datset imagenette --patch_size 31 --aggr cbn #untargeted attack against bagnet17 with cbn clipping
+python patch_attack.py --model bagnet17 --datset imagenette --patch_size 31 #untargeted attack against bagnet17
+python patch_attack.py --model bagnet17 --datset imagenette --patch_size 31 --aggr cbn #untargeted attack against bagnet17 with cbn clipping
 #train model
 python train_imagenette.py --model_name bagnet17_nette.pth  --epoch 20 #train model on imagenette
 python train_imagenette.py --model_name bagnet17_nette.pth --aggr adv --epoch 20 #train model on imagenette with provable adversarial training

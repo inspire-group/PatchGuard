@@ -13,8 +13,8 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 ├── README.md                        #this file 
 ├── requirement.txt                  #required package
 ├── example_cmd.sh                   #example command to run the code
-├── mask_bn.py                       #mask-bn for imagenet/imagenet/cifar
-├── mask_ds.py                       #mask-ds/ds for imagenet/imagenet/cifar
+├── mask_bn.py                       #mask-bn for imagenet/imagenette/cifar
+├── mask_ds.py                       #mask-ds/ds for imagenet/imagenette/cifar
 ├── nets
 |   ├── bagnet.py                    #modified bagnet model for mask-bn
 |   ├── resnet.py                    #modified resnet model 
@@ -22,7 +22,7 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 |   └── dsresnet_cifar.py            #ds-resnet-18 for cifar
 ├── utils
 |   ├── defense_utils.py             #utils for different defenses
-|   ├── normalize_utils.py           #utils for nomrlize images stored in numpy array (unused in the paper)
+|   ├── normalize_utils.py           #utils for normalize images stored in numpy array (unused in the paper)
 |   ├── cutout.py                    #utils for CUTOUT training (unused)
 |   └── progress_bar.py              #progress bar (used in train_cifar.py)
 | 
@@ -31,8 +31,8 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 |   ├── train_imagenet.py            #train resnet/bagnet for imagenet
 |   ├── train_imagenette.py          #train resnet/bagnet for imagenette
 |   ├── train_cifar.py               #train resnet/bagnet for cifar
-|   ├── patch_attack_bagnet.py       #empirically (untargeted) attack resnet/bagnet trained on imagenet/imagenette/cifar
-|   ├── PatchAttacker.py             #untargeted adversarial patch attack 
+|   ├── patch_attack.py              #empirically (untargeted) attack resnet/bagnet trained on imagenet/imagenette/cifar
+|   ├── PatchAttacker.py             #utils for untargeted adversarial patch attack 
 |
 ├── data   
 |   ├── imagenet                     #data directory for imagenet
@@ -50,17 +50,14 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 
 ## Usage
 - See **Files** for details of each file. 
-
 - Download data in **Datasets** to `data/`.
-
 - (optional) Download checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) and move them to `checkpoints`.
-
 - See `example_cmd.sh` for example commands for running the code.
 
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Notes
-- 02/11/2020 - Merged a few scripts; fixed a few minor bugs.
+- 02/11/2021 - Merged a few scripts; fixed minor bugs.
 - 10/17/2020 - Updated old checkpoints. Please download the new checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) for better model performance. Note that checkpoints for 1000-class ImageNet are also available now. Also a few minor updates to the source code. 
 - 08/01/2020 - A major update to `defense_utils.py`. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
 

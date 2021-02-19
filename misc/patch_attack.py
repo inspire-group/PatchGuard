@@ -15,11 +15,10 @@ from tqdm import tqdm
 import numpy as np 
 import PIL
 from PatchAttacker import PatchAttacker
-
+import joblib
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dump_dir",default='patch_adv',type=str,help="directory to save attack results")
-
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
 parser.add_argument('--data_dir', default='data', type=str,help="path to data")
 parser.add_argument('--dataset', default='imagenette', choices=('imagenette','imagenet','cifar'),type=str,help="dataset")
@@ -76,13 +75,12 @@ else:
 
 if 'bagnet17' in args.model:
     model = nets.bagnet.bagnet17(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=17
 elif 'bagnet33' in args.model:
     model = nets.bagnet.bagnet33(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=33
 elif 'bagnet9' in args.model:
     model = nets.bagnet.bagnet9(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
-    rf_size=9
+elif 'resnet50' in args.model:
+    model = nets.resnet.resnet50(pretrained=True,clip_range=clip_range,aggregation=args.aggr)
 
 
 if DATASET == 'imagenette':
