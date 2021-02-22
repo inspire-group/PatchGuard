@@ -1,7 +1,7 @@
 # PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking
 By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://vsehwag.github.io/), [Prattek Mittal](https://www.princeton.edu/~pmittal/)
 
-Code for paper "PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking" [arXiv](https://arxiv.org/abs/2005.10884)
+Code for USENIX security 2021 paper "PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking" [arXiv link](https://arxiv.org/abs/2005.10884)
 
 <img src="./doc/overview.png" width="100%" alt="defense overview pipeline" align=center>
 
@@ -56,12 +56,23 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
-## Notes
-- 02/11/2021 - Merged a few scripts; fixed minor bugs.
-- 10/17/2020 - Updated old checkpoints. Please download the new checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) for better model performance. Note that checkpoints for 1000-class ImageNet are also available now. Also a few minor updates to the source code. 
-- 08/01/2020 - A major update to `defense_utils.py`. Please check the latest version of paper on [arXiv](https://arxiv.org/abs/2005.10884) and use the new provable analysis in `defense_utils.py`.
-
 ## Related Repositories
 - [certifiedpatchdefense](https://github.com/Ping-C/certifiedpatchdefense)
 - [patchSmoothing](https://github.com/alevine0/patchSmoothing)
 - [bag-of-local-features-models](https://github.com/wielandbrendel/bag-of-local-features-models)
+
+## Citation
+
+If you find our work useful in your research, please consider citing:
+
+```tex
+@inproceedings{xiang2020patchguard,
+  title={PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking},
+  author={Xiang, Chong and Bhagoji, Arjun Nitin and Sehwag, Vikash and Mittal, Prateek},
+  booktitle = {30th {USENIX} Security Symposium ({USENIX} Security)},
+  year={2021}
+}
+```
+
+
+
