@@ -218,8 +218,8 @@ def masking_ds(inpt,labels,net,block_size,size_to_certify,thres=0.0):
 		pred_list.append(pred_tmp)
 
 	#output_list = np.stack(logits_list,axis=1)
-	#output_list = np.stack(cnf_list,axis=1)
-	output_list = np.stack(pred_list,axis=1)
+	output_list = np.stack(cnf_list,axis=1)
+	#output_list = np.stack(pred_list,axis=1)
 
 	B,W,C=output_list.shape
 	result_list=[]
@@ -384,3 +384,48 @@ def provable_clipping(local_feature,label,clipping=-1,window_shape=[6,6]):
 			if diff < max_increase:
 				return 1
 	return 2 # provable robustness
+
+
+
+
+
+# for PatchGuard++
+
+def provable_detection(local_feature,label,tau,window_shape=[6,6]):
+	
+	feature_size_x,feature_size_y,num_cls = local_feature.shape
+	window_size_x,window_size_y = window_shape
+	num_window_x = feature_size_x - window_size_x + 1 
+	num_window_y = feature_size_y - window_size_y + 1 
+
+	global_feature = np.mean(local_feature,axis=(0,1))
+	pred_list = np.argsort(global_feature,kind='stable')
+	global_pred = pred_list[-1]
+
+	in_window_sum_tensor=np.zeros([num_window_x,num_window_y,num_cls])
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+	in_window_sum_tensor = in_window_sum_tensor/(feature_size_x*feature_size_y)
+
+	if global_pred != label: # clean prediction is incorrect
+		return 0,0 # 0 for incorrect clean prediction
+
+	clean = 1
+	provable = 2
+	#tau = 0
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			global_feature_masked = global_feature - in_window_sum_tensor[x,y]
+			global_feature_masked = softmax(global_feature_masked)
+			masked_pred = np.argmax(global_feature_masked)
+			masked_conf = np.max(global_feature_masked)
+			if masked_pred != label or masked_conf<tau:
+				provable = 1
+			if masked_pred != label and masked_conf>tau:
+				clean = 0
+			if provable == 1 and clean ==0:
+				return provable,clean
+	return provable,clean
+
+

@@ -1,9 +1,11 @@
 # PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking
 By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://vsehwag.github.io/), [Prattek Mittal](https://www.princeton.edu/~pmittal/)
 
-Code for USENIX security 2021 paper "PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking" [arXiv link](https://arxiv.org/abs/2005.10884)
+Code for "[PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking](https://www.usenix.org/conference/usenixsecurity21/presentation/xiang)" in USENIX security 2021 [arXiv Technical Report](https://arxiv.org/abs/2005.10884)
 
 <img src="./doc/overview.png" width="100%" alt="defense overview pipeline" align=center>
+
+Update 05/2021: also include code (`det_bn.py`) for "[PatchGuard++: Efficient Provable Attack Detection against Adversarial Patches](https://arxiv.org/abs/2104.12609)" in Security and Safety in Machine Learning Systems Workshop at ICLR 2021
 
 ## Requirements
 The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of required packages are available in `requirement.txt`, and can be installed with `pip install -r requirement.txt`. The code should be compatible with other versions of packages.
@@ -13,8 +15,9 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 ├── README.md                        #this file 
 ├── requirement.txt                  #required package
 ├── example_cmd.sh                   #example command to run the code
-├── mask_bn.py                       #mask-bn for imagenet/imagenette/cifar
-├── mask_ds.py                       #mask-ds/ds for imagenet/imagenette/cifar
+├── mask_bn.py                       #PatchGuard: mask-bn for imagenet/imagenette/cifar 
+├── mask_ds.py                       #PatchGuard: mask-ds/ds for imagenet/imagenette/cifar
+├── det_bn.py                        #PatchGuard++: provable robust attack detection
 ├── nets
 |   ├── bagnet.py                    #modified bagnet model for mask-bn
 |   ├── resnet.py                    #modified resnet model 
@@ -22,15 +25,16 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 |   └── dsresnet_cifar.py            #ds-resnet-18 for cifar
 ├── utils
 |   ├── defense_utils.py             #utils for different defenses
-|   ├── normalize_utils.py           #utils for normalize images stored in numpy array (unused in the paper)
-|   ├── cutout.py                    #utils for CUTOUT training (unused)
-|   └── progress_bar.py              #progress bar (used in train_cifar.py)
+|   ├── normalize_utils.py           #utils for normalize images stored in numpy array (not used in the paper)
+|   ├── cutout.py                    #utils for CUTOUT training (not used)
+|   └── progress_bar.py              #progress bar (used in train_cifar.py; unnecessary though)
 | 
-├── misc                             #useful scripts; move them to the main directory for execution
+├── misc                             #useful scripts (but not used in robustness evaluation); move them to the main directory for execution
 |   ├── test_acc.py                  #test clean accuracy of resnet/bagnet on imagenet/imagenette/cifar; support clipping, median operations
 |   ├── train_imagenet.py            #train resnet/bagnet for imagenet
 |   ├── train_imagenette.py          #train resnet/bagnet for imagenette
 |   ├── train_cifar.py               #train resnet/bagnet for cifar
+                                     #NOTE: The attack scripts are not used in our defense evaluation! 
 |   ├── patch_attack.py              #empirically (untargeted) attack resnet/bagnet trained on imagenet/imagenette/cifar
 |   ├── PatchAttacker.py             #utils for untargeted adversarial patch attack 
 |
@@ -61,17 +65,25 @@ If anything is unclear, please open an issue or contact Chong Xiang (cxiang@prin
 - [patchSmoothing](https://github.com/alevine0/patchSmoothing)
 - [bag-of-local-features-models](https://github.com/wielandbrendel/bag-of-local-features-models)
 
-## Citation
+## Citations
 
 If you find our work useful in your research, please consider citing:
 
 ```tex
-@inproceedings{xiang2020patchguard,
+@inproceedings{xiang2021patchguard,
   title={PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking},
   author={Xiang, Chong and Bhagoji, Arjun Nitin and Sehwag, Vikash and Mittal, Prateek},
   booktitle = {30th {USENIX} Security Symposium ({USENIX} Security)},
   year={2021}
 }
+
+@inproceedings{xiang2021patchguard2,
+  title={PatchGuard++: Efficient Provable Attack Detection against Adversarial Patches},
+  author={Xiang, Chong and Mittal, Prateek},
+  booktitle = {ICLR 2021 Workshop on Security and Safety in Machine Learning Systems},
+  year={2021}
+}
+
 ```
 
 
