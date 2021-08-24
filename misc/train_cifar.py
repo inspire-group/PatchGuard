@@ -148,7 +148,7 @@ def test(epoch):
     # Save checkpoint.
     #joblib.dump(idx_list,'masked_contour_correct_idx.z')
     acc = 100.*correct/total
-    if acc > best_acc:
+    if True:#acc > best_acc:
         print('Saving..')
         state = {
             'net': net.state_dict(),
