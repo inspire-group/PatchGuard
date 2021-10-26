@@ -2,10 +2,12 @@
 ### overview
 Model checkpoints used in the paper can be downloaded from [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing).
 
+The checkpoints from the google drive is obtained with "provable adversarial training" (add feature masks during the training).
+
 Model training should be very easy with the provided training scripts. 
 
-### checkpoints for bagnet/resnet trained on imagenette
-two re-trained models are available now, more to come!
+### checkpoints for bagnet/resnet trained on imagenet
+two model checkpoints trained with "provable adversarial training" are available now! bagnet17_net.pth will give the results reported in our paper. PS: the clean accuracy for resnet50 (note that resnet50 is not used in our defense!) reported in the paper uses the pretrained weights from torchvision.
 
 - bagnet33_net.pth
 - bagnet17_net.pth
