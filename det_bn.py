@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--model_dir",default='checkpoints',type=str,help="path to checkpoints")
 parser.add_argument('--data_dir', default='data', type=str,help="path to data")
 parser.add_argument('--dataset', default='imagenette', choices=('imagenette','imagenet','cifar'),type=str,help="dataset")
-parser.add_argument("--model",default='bagnet17',type=str,help="model name")
+parser.add_argument("--model",default='bagnet33',type=str,help="model name")
 parser.add_argument("--clip",default=-1,type=int,help="clipping value; do clipping when this argument is set to positive")
 parser.add_argument("--aggr",default='none',type=str,help="aggregation methods. set to none for local feature")
 parser.add_argument("--skip",default=1,type=int,help="number of example to skip")
@@ -139,7 +139,7 @@ for data,labels in tqdm(val_loader):
 
 
 cases,cnt=np.unique(result_list,return_counts=True)
-print("Provable robust accuracy:",cnt[-1]/len(result_list))
+print("Provable robust accuracy:",cnt[-1]/len(result_list) if len(cnt)==3 else 0)
 print("Clean accuracy with defense:",clean_corr/len(result_list))
 print("Clean accuracy without defense:",np.sum(accuracy_list)/len(val_dataset))
 print("------------------------------")

@@ -146,7 +146,7 @@ for data,labels in tqdm(val_loader):
 
 
 cases,cnt=np.unique(result_list,return_counts=True)
-print("Provable robust accuracy:",cnt[-1]/len(result_list))
+print("Provable robust accuracy:",cnt[-1]/len(result_list) if len(cnt)==3 else 0)
 print("Clean accuracy with defense:",clean_corr/len(result_list))
 print("Clean accuracy without defense:",np.sum(accuracy_list)/len(val_dataset))
 print("------------------------------")

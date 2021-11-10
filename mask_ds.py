@@ -133,7 +133,7 @@ if args.m:#mask-ds
 
     cases,cnt=np.unique(result_list,return_counts=True)
     print('Results for Mask-DS')
-    print("Provable robust accuracy:",cnt[-1]/len(result_list))
+    print("Provable robust accuracy:",cnt[-1]/len(result_list) if len(cnt)==3 else 0)
     print("Clean accuracy with defense:",np.mean(clean_corr_list))
     print("------------------------------")
     print("Provable analysis cases (0: incorrect prediction; 1: vulnerable; 2: provably robust):",cases)

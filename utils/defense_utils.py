@@ -387,12 +387,21 @@ def provable_clipping(local_feature,label,clipping=-1,window_shape=[6,6]):
 
 
 
+##################################################################################################################################
 
 
 # for PatchGuard++
 
 def provable_detection(local_feature,label,tau,window_shape=[6,6]):
-	
+	# I combine the analysis of provable robust accuracy and clean accuracy in the same function to save some computation
+	'''
+	local_feature	numpy.ndarray, feature tensor in the shape of [feature_size_x,feature_size_y,num_cls]
+	label 			int, the ground-truth class label
+	tau 			float in [0,1], detection threshold. $\tau$ in the paper
+	window_shape	list [int,int], the shape of sliding window
+
+	Return 			tuple (int,int), the first int is the provable analysis result; the second if whether the clean prediction is correct (1) or not (0)
+	'''
 	feature_size_x,feature_size_y,num_cls = local_feature.shape
 	window_size_x,window_size_y = window_shape
 	num_window_x = feature_size_x - window_size_x + 1 

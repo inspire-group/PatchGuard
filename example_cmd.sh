@@ -15,6 +15,10 @@ python mask_ds.py --datset imagenet --patch_size 42 --m #mask-ds for imagenet
 python mask_ds.py --datset cifar --patch_size 5 --ds #ds for cifar
 python mask_ds.py --datset cifar --patch_size 5 --m #mask-ds for cifar
 
+# patchguard++
+python det_bn.py --det --model bagnet33 --tau 0.5 --patch_sie 32 --dataset imagenette # an example. the usage is similar to mask_bn.py and mask_ds.py
+python det_bn.py --det --model bagnet33 --tau 0.7 --patch_sie 32 --dataset imagenette # you can try different threshold tau
+
 #test model accuracy
 python test_acc.py --model resnet50 --dataset imagenette #test accuracy of resnet50 on imagenette 
 python test_acc.py --model resnet50 --dataset imagenet #test accuracy of resnet50 on imagenet 
