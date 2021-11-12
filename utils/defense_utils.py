@@ -392,6 +392,86 @@ def provable_clipping(local_feature,label,clipping=-1,window_shape=[6,6]):
 
 # for PatchGuard++
 
+
+
+def pg2_detection(local_feature,tau,window_shape=[6,6]):
+	'''
+	local_feature	numpy.ndarray, feature tensor in the shape of [feature_size_x,feature_size_y,num_cls]
+	tau 			float in [0,1], detection threshold. $\tau$ in the paper
+	window_shape	list [int,int], the shape of sliding window
+
+	Return 			int, class label or -1 for alert
+	'''
+	feature_size_x,feature_size_y,num_cls = local_feature.shape
+	window_size_x,window_size_y = window_shape
+	num_window_x = feature_size_x - window_size_x + 1 
+	num_window_y = feature_size_y - window_size_y + 1 
+
+	global_feature = np.mean(local_feature,axis=(0,1))
+	pred_list = np.argsort(global_feature,kind='stable')
+	global_pred = pred_list[-1]
+
+	in_window_sum_tensor=np.zeros([num_window_x,num_window_y,num_cls])
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+	in_window_sum_tensor = in_window_sum_tensor/(feature_size_x*feature_size_y)
+
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			global_feature_masked = global_feature - in_window_sum_tensor[x,y]
+			global_feature_masked = softmax(global_feature_masked)
+			masked_pred = np.argmax(global_feature_masked)
+			masked_conf = np.max(global_feature_masked)
+			if masked_pred != global_pred and masked_conf>tau:
+				return -1
+	return global_pred
+
+
+
+
+def pg2_detection_provable(local_feature,label,tau,window_shape=[6,6]):
+	'''
+	local_feature	numpy.ndarray, feature tensor in the shape of [feature_size_x,feature_size_y,num_cls]
+	label 			int, the ground-truth class label
+	tau 			float in [0,1], detection threshold. $\tau$ in the paper
+	window_shape	list [int,int], the shape of sliding window
+
+	Return 		 	int, provable analysis results (0: incorrect clean prediction; 1: possible attack found; 2: certified robustness )
+	'''
+	feature_size_x,feature_size_y,num_cls = local_feature.shape
+	window_size_x,window_size_y = window_shape
+	num_window_x = feature_size_x - window_size_x + 1 
+	num_window_y = feature_size_y - window_size_y + 1 
+
+	global_feature = np.mean(local_feature,axis=(0,1))
+	pred_list = np.argsort(global_feature,kind='stable')
+	global_pred = pred_list[-1]
+
+	in_window_sum_tensor=np.zeros([num_window_x,num_window_y,num_cls])
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			in_window_sum_tensor[x,y,:] = np.sum(local_feature[x:x+window_size_x,y:y+window_size_y,:],axis=(0,1))
+	in_window_sum_tensor = in_window_sum_tensor/(feature_size_x*feature_size_y)
+
+	if global_pred != label: # clean prediction is incorrect
+		return 0
+
+	for x in range(0,num_window_x):
+		for y in range(0,num_window_y):
+			global_feature_masked = global_feature - in_window_sum_tensor[x,y]
+			global_feature_masked = softmax(global_feature_masked)
+			masked_pred = np.argmax(global_feature_masked)
+			masked_conf = np.max(global_feature_masked)
+			if masked_pred != label or masked_conf<tau:
+				return 1
+
+	return 2 
+
+
+
+"""
+old helper function, a combination of two functions above
 def provable_detection(local_feature,label,tau,window_shape=[6,6]):
 	# I combine the analysis of provable robust accuracy and clean accuracy in the same function to save some computation
 	'''
@@ -437,4 +517,4 @@ def provable_detection(local_feature,label,tau,window_shape=[6,6]):
 				return provable,clean
 	return provable,clean
 
-
+"""

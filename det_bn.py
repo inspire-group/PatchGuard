@@ -131,9 +131,15 @@ for data,labels in tqdm(val_loader):
     for i in range(len(labels)):
         if args.det:
             local_feature = output_clean[i]
-            result,clean_pred = provable_detection(local_feature,labels[i],tau=args.tau,window_shape=[window_size,window_size])
+            #result,clean_pred = provable_detection(local_feature,labels[i],tau=args.tau,window_shape=[window_size,window_size])
+            #clean_corr += clean_pred 
+
+            clean_pred = pg2_detection(local_feature,tau=args.tau,window_shape=[window_size,window_size])
+            clean_corr += clean_pred == labels[i]
+
+            result = pg2_detection_provable(local_feature,labels[i],tau=args.tau,window_shape=[window_size,window_size])
             result_list.append(result)
-            clean_corr += clean_pred 
+            
     acc_clean = np.sum(np.argmax(np.mean(output_clean,axis=(1,2)),axis=1) == labels)
     accuracy_list.append(acc_clean)
 
