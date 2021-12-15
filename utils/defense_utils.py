@@ -110,17 +110,23 @@ def provable_masking(local_feature,label,clipping=-1,thres=0.,window_shape=[6,6]
 				local_feature_pred_masked[x:x+window_size_x,y:y+window_size_y]=0 # operation $u\odot(1-w)$
 
 			in_window_sum_pred_masked = in_window_sum_tensor[:,:,global_pred].copy()
+			overlap_window_max_sum = 0
 			# only need to recalculate the windows the are partially masked
 			for xx in range(max(0,x - window_size_x + 1),min(x + window_size_x,num_window_x)):
 				for yy in range(max(0,y - window_size_y + 1),min(y + window_size_y,num_window_y)):
 					if ds and xx+window_size_x>feature_size_x:
 						in_window_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:,yy:yy+window_size_y].sum()+local_feature_pred_masked[:xx+window_size_x-feature_size_x,yy:yy+window_size_y].sum()
+						overlap_window_max_sum = in_window_sum_pred_masked[xx,yy] if overlap_window_max_sum<in_window_sum_pred_masked[xx,yy] else overlap_window_max_sum
 					else:
 						in_window_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:xx+window_size_x,yy:yy+window_size_y].sum()
-					
+						overlap_window_max_sum = in_window_sum_pred_masked[xx,yy] if overlap_window_max_sum<in_window_sum_pred_masked[xx,yy] else overlap_window_max_sum
+						
 			max_window_sum_pred = np.max(in_window_sum_pred_masked) # find the window with the largest sum
 			if max_window_sum_pred / local_feature_pred_masked.sum() > thres: 
 				global_feature_masked[global_pred]-=max_window_sum_pred
+			else:
+				global_feature_masked[global_pred]-=overlap_window_max_sum
+				
 
 			# determine if an attack is possible
 			if np.argsort(global_feature_masked,kind='stable')[-1]!=label: 
