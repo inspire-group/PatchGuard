@@ -5,7 +5,7 @@ Code for "[PatchGuard: A Provably Robust Defense against Adversarial Patches via
 
 <img src="./doc/overview.png" width="100%" alt="defense overview pipeline" align=center>
 
-Update 12/2021: fix an incorrect lower bound computation for the true class when the detection threshold T>0. Thank [Linyi Li](https://github.com/llylly) for pointing that out! The mistake does not affect the main results of paper (since the main results are obtained with T=0).
+Update 12/2021: fix incorrect lower bound computation for the true class when the detection threshold T>0. Thank [Linyi Li](https://github.com/llylly) for pointing that out! The mistake does not affect the main results of paper (since the main results are obtained with T=0).
 
 Update 08/2021: start to work on a paper list for adversarial patch research [(link)](https://github.com/xiangchong1/adv-patch-paper-list).
 
