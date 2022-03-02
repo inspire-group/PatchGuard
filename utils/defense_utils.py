@@ -306,7 +306,7 @@ def provable_masking_large_mask(local_feature,label,clipping=-1,thres=0.,window_
 			max_cover_patch_mask_sum = np.max(cover_patch_mask_sum_tensor,axis=(0,1))
 			global_feature_patched = global_feature - max_cover_patch_mask_sum # $t-k$ in the proof of Lemma 2
 			global_feature_patched[idx]/=(1 - thres) # $(t-k)/(1-T)$ in the proof of Lemma 2
-
+			overlap_window_max_sum = 0
 			# determine the lower bound of true class evidence
 			local_feature_pred_masked = local_feature[:,:,global_pred].copy()
 			local_feature_pred_masked[x:x+patch_size_x,y:y+patch_size_y]=0
@@ -315,12 +315,15 @@ def provable_masking_large_mask(local_feature,label,clipping=-1,thres=0.,window_
 			for xx in range(max(0,x - mask_size_x + 1),min(x + patch_size_x,num_mask_x)):
 				for yy in range(max(0,y - mask_size_y + 1),min(y + patch_size_y,num_mask_y)):
 					in_mask_sum_pred_masked[xx,yy]=local_feature_pred_masked[xx:xx+mask_size_x,yy:yy+mask_size_y].sum()
+					overlap_window_max_sum = in_window_sum_pred_masked[xx,yy] if overlap_window_max_sum<in_window_sum_pred_masked[xx,yy] else overlap_window_max_sum
 			max_mask_sum_pred = np.max(in_mask_sum_pred_masked)
 
 			global_feature_patched[global_pred]= global_feature[global_pred] - in_patch_sum_tensor[x,y,global_pred]
 			if max_mask_sum_pred / local_feature_pred_masked.sum() > thres: 
 				global_feature_patched[global_pred]-=max_mask_sum_pred
-			
+			else:
+				global_feature_masked[global_pred]-=overlap_window_max_sum
+				
 			# determine if an attack is possible
 			if np.argsort(global_feature_patched,kind='stable')[-1]!=label:
 				return 1
