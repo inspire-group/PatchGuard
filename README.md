@@ -5,11 +5,13 @@ Code for "[PatchGuard: A Provably Robust Defense against Adversarial Patches via
 
 <img src="./doc/overview.png" width="100%" alt="defense overview pipeline" align=center>
 
-Update 12/2021: fix incorrect lower bound computation for the true class when the detection threshold T>0. Thank [Linyi Li](https://github.com/llylly) for pointing that out! The mistake does not affect the main results of paper (since the main results are obtained with T=0).
+Update 04/2022: Check out our new [PatchCleanser](https://github.com/inspire-group/PatchCleanser) defense (USENIX Security 2022), our [paper list for adversarial patch research](https://github.com/xiangchong1/adv-patch-paper-list), and [leaderboard for certifiable robust image classification](https://github.com/inspire-group/patch-defense-leaderboard) for fun!
 
-Update 08/2021: start to work on a paper list for adversarial patch research [(link)](https://github.com/xiangchong1/adv-patch-paper-list).
+Update 12/2021: fixed incorrect lower bound computation for the true class when the detection threshold T>0. Thank [Linyi Li](https://github.com/llylly) for pointing that out! The mistake does not affect the main results of paper (since the main results are obtained with T=0).
 
-Update 05/2021: include code (`det_bn.py`) for "[PatchGuard++: Efficient Provable Attack Detection against Adversarial Patches](https://arxiv.org/abs/2104.12609)" in Security and Safety in Machine Learning Systems Workshop at ICLR 2021.
+Update 08/2021: started to work on a paper list for adversarial patch research [(link)](https://github.com/xiangchong1/adv-patch-paper-list).
+
+Update 05/2021: included code (`det_bn.py`) for "[PatchGuard++: Efficient Provable Attack Detection against Adversarial Patches](https://arxiv.org/abs/2104.12609)" in Security and Safety in Machine Learning Systems Workshop at ICLR 2021.
 
 ## Requirements
 The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of required packages are available in `requirement.txt`, and can be installed with `pip install -r requirement.txt`. The code should be compatible with other versions of packages.
