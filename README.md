@@ -1,5 +1,6 @@
 # PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking
-By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://vsehwag.github.io/), [Prattek Mittal](https://www.princeton.edu/~pmittal/)
+
+By [Chong Xiang](http://xiangchong.xyz/), [Arjun Nitin Bhagoji](http://www.princeton.edu/~abhagoji/), [Vikash Sehwag](https://vsehwag.github.io/), [Prateek Mittal](https://www.princeton.edu/~pmittal/)
 
 Code for "[PatchGuard: A Provably Robust Defense against Adversarial Patches via Small Receptive Fields and Masking](https://www.usenix.org/conference/usenixsecurity21/presentation/xiang)" in USENIX security 2021 [arXiv Technical Report](https://arxiv.org/abs/2005.10884)
 
@@ -14,9 +15,11 @@ Update 08/2021: started to work on a paper list for adversarial patch research [
 Update 05/2021: included code (`det_bn.py`) for "[PatchGuard++: Efficient Provable Attack Detection against Adversarial Patches](https://arxiv.org/abs/2104.12609)" in Security and Safety in Machine Learning Systems Workshop at ICLR 2021.
 
 ## Requirements
+
 The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of required packages are available in `requirement.txt`, and can be installed with `pip install -r requirement.txt`. The code should be compatible with other versions of packages.
 
 ## Files
+
 ```shell
 ├── README.md                        #this file 
 ├── requirement.txt                  #required package
@@ -53,12 +56,15 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
     ├── README.md                    #details of each checkpoint
     └── ...                          #model checkpoints
 ```
+
 ## Datasets
+
 - [ImageNet](http://www.image-net.org/) (ILSVRC2012)
 - [ImageNette](https://github.com/fastai/imagenette) ([Full size](https://s3.amazonaws.com/fast-ai-imageclas/imagenette2.tgz))
 - [CIFAR-10](https://www.cs.toronto.edu/~kriz/cifar.html)
 
 ## Usage
+
 - See **Files** for details of each file. 
 - Download data in **Datasets** to `data/`.
 - (optional) Download checkpoints from Google Drive [link](https://drive.google.com/drive/folders/1u5RsCuZNf7ddWW0utI4OrgWGmJCUDCuT?usp=sharing) and move them to `checkpoints`.
@@ -67,6 +73,7 @@ The code is tested with Python 3.8 and PyTorch 1.7.0. The complete list of requi
 If anything is unclear, please open an issue or contact Chong Xiang (cxiang@princeton.edu).
 
 ## Related Repositories
+
 - [certifiedpatchdefense](https://github.com/Ping-C/certifiedpatchdefense)
 - [patchSmoothing](https://github.com/alevine0/patchSmoothing)
 - [bag-of-local-features-models](https://github.com/wielandbrendel/bag-of-local-features-models)
@@ -89,8 +96,4 @@ If you find our work useful in your research, please consider citing:
   booktitle = {ICLR 2021 Workshop on Security and Safety in Machine Learning Systems},
   year={2021}
 }
-
 ```
-
-
-
